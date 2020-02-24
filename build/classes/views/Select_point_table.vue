@@ -18,7 +18,7 @@
     </tr>
     </table>
     <!--分页-->
-	<div class="page-bar">
+	<div class="page-bar" style="margin-left:25px">
 	<ul>
 	<li v-if="cur>1"><a v-on:click="cur--,pageClick()">上一页</a></li>
 	<li v-if="cur==1"><a class="banclick">上一页</a></li>
@@ -198,7 +198,7 @@ th
   
 /*分页*/
 .page-bar{
-margin-left: 500px;
+margin-left: 100px;
 margin-top: 350px;
 }
 ul,li{

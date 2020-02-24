@@ -1,39 +1,11 @@
 <template>
   <div class="home">
-    <el-row class="tac">
-      <!-- 导航菜单 -->
-      <el-col :span="4" class="left">
-        <el-row>
-          <el-col :span="24"><div class="grid-content bg-purple-dark title"><span class="backstage">青马班</span><span class="admin">选课系统</span></div></el-col>
-        </el-row>
-         <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" @select="handleSelect" router unique-opened>
-          <!-- <el-menu-item index="/">
-            <i class="el-icon-house"></i>
-            <span slot="title">首页</span>
-          </el-menu-item> -->
-          <el-submenu :index="index.toString()" v-for="(item, index) in navData" :key="index">
-            <template slot="title">
-              <i :class="item.icon"></i>
-              <span>{{ item.name }}</span>
-            </template>
-              <el-menu-item :index="even.path" v-for="(even, index) in item.evens" :key="index">{{ even.name }}</el-menu-item>
-          </el-submenu>
-        </el-menu>
-      </el-col>
-      <!-- 右面内容 -->
-      <el-col :span='20'>
-        <el-row>
-          <el-col :span="24">
-            <div class="grid-content bg-purple-dark top">
-              <el-breadcrumb separator=">">
-                <el-breadcrumb-item v-for="(item, index) in bread" :to=item.path :key='index'>{{item.name}}</el-breadcrumb-item>
-              </el-breadcrumb>
-              <span class="title-user">
-                <span v-if="this.$store.state.user_name">欢迎您，{{this.$store.state.user_name}}</span>
-                <span v-else><a href="">登录</a></span>
-              </span>
+			<div class="header_left">
+			<img src="../assets/ECNU.png">
             </div>
             <!--轮播图-->
+            <div class="header_right">
+            <span>青马班选课系统</span>
 			<div id="dataCenter">
                  <div class="window" @mouseover="stop" @mouseleave="play">
                       <ul class="container" :style="containerStyle">
@@ -49,7 +21,7 @@
                             <img :style="{width:imgWidth+'px'}" :src="sliders[0].img" alt="">
                             </li>
                      </ul>
-               // 左右切换按钮
+               <!--左右切换按钮-->
                      <ul class="direction" v-show=hide_expose>
                            <li class="left" @click="move(imgWidth, 1, speed)">
                               <svg class="icon" width="30px" height="30.00px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="#ffffff" d="M481.233 904c8.189 0 16.379-3.124 22.628-9.372 12.496-12.497 12.496-32.759 0-45.256L166.488 512l337.373-337.373c12.496-12.497 12.496-32.758 0-45.255-12.498-12.497-32.758-12.497-45.256 0l-360 360c-12.496 12.497-12.496 32.758 0 45.255l360 360c6.249 6.249 14.439 9.373 22.628 9.373z"  /></svg>
@@ -58,7 +30,7 @@
                               <svg class="icon" width="30px" height="30.00px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="#ffffff" d="M557.179 904c-8.189 0-16.379-3.124-22.628-9.372-12.496-12.497-12.496-32.759 0-45.256L871.924 512 534.551 174.627c-12.496-12.497-12.496-32.758 0-45.255 12.498-12.497 32.758-12.497 45.256 0l360 360c12.496 12.497 12.496 32.758 0 45.255l-360 360c-6.249 6.249-14.439 9.373-22.628 9.373z"  /></svg>
                            </li>
                      </ul>
-                // 小圆点
+                <!--小圆点-->
                 <h2>{{this.sliders[current_img].title}}</h2>
                    <ul class="dots">
                       <li v-for="(dot, i) in sliders" :key="i"
@@ -69,14 +41,25 @@
                    </ul>
                </div>
                <div class="mask-div" @click="maskFun()" v-if="maskBol">
-                  <img :style="{width:imgWidth+'px'}" :src="sliders[imgNumber].img" alt="" class="mask-img">
+                  <img :style="{width:imgWidth+'px',height:'659px'}" :src="sliders[imgNumber].img" alt="" class="mask-img">
                </div>
             </div>
-          </el-col>
-          <el-col :span="24"><div class="body"><router-view></router-view></div></el-col>
-        </el-row>
-      </el-col>
-    </el-row>
+               <nav>
+                   <ul>
+                       <li><a href="/">首页</a></li>
+                       <li v-for="(item1,index1) in navData" :key="index1">
+                      {{item1.name}}
+                      <ul v-if="item1.evens.length>0" style="margin-top:1px;">
+                        <li v-for="(item2,index2) in item1.evens" :key="index2">
+                        <a :href="item2.path">
+                        {{item2.name}}
+                        </a>
+                        </li>
+                      </ul>
+                      </li>
+                   </ul>
+                </nav>
+        </div>
   </div>
 </template>
 
@@ -100,7 +83,7 @@
 	},
     data() {
       return {
-        hide_expose:false,
+        hide_expose:true,
 		sliders: [
         {
           img: 'http://img.hb.aicdn.com/adbde61e4343dedd21e97ea7f22666825a8db7d077ffe-qn8Pjn_fw658',
@@ -125,28 +108,27 @@
       ], // 放图片的数组
       current_img: 0,//当前图片序号
       slide_direction:-1,//自行轮播移动方向（左）
-      imgWidth: 1253, // 图片宽度根据div宽度大小定
+      imgWidth: 375, // 图片宽度根据div宽度大小定*
       currentIndex: 1, // 原点起始位置
-      distance: -1253, // 外层嵌套的初始移动距离根据图片宽度定
+      distance: -375, // 外层嵌套的初始移动距离根据图片宽度定*
       transitionEnd: true, // 防止多次快速点击切换出现问题的闸门
       speed: this.initialSpeed,
       timer: null, // 定时器
       imgNumber: 0, // 点击放大的图片
       maskBol: false,
         navData: [ 
-          { num: 1 , name: "首页", icon: 'el-icon-house' , evens: [ { name:'首页', path: '/' } ] },
-          { num: 2 , name: "用户管理", icon: 'el-icon-s-custom' , evens: [ { name:'用户信息', path: 'student_inf' },] 
+          { num: 2 , name: "用户管理", icon: 'el-icon-s-custom' , evens: [ { name:'用户信息', path: '/student_inf' },] 
           },
-          { num: 3 , name: "成绩信息", icon: 'el-icon-s-data' , evens: [ { name:'总成绩', path: 'grade_table' },
-          { name:'必修课成绩', path: 'must_point_table' }, { name: '选修课成绩', path: 'select_point_table' },
-          { name: '失信记录', path: 'lose_trust' } ] 
+          { num: 3 , name: "成绩信息", icon: 'el-icon-s-data' , evens: [ { name:'总成绩', path: '/grade_table' },
+          { name:'必修课成绩', path: '/must_point_table' }, { name: '选修课成绩', path: '/select_point_table' },
+          { name: '失信记录', path: '/lose_trust' } ] 
           },
-          { num: 4 , name: "课程管理", icon: 'el-icon-folder-checked' , evens: [ { name:'课程表', path: 'my_classtable_ready' }, 
-            { name: '已修课程', path: 'my_classtable_already' }, { name: '选课', path: 'select_course' } ] 
+          { num: 4 , name: "课程管理", icon: 'el-icon-folder-checked' , evens: [ { name:'课程表', path: '/my_classtable_ready' }, 
+            { name: '已修课程', path: '/my_classtable_already' }, { name: '选课', path: '/select_course' } ] 
             },
-          { num: 5 , name: "活动管理", icon: 'el-icon-present' , evens: [ { name:'课程签到', path: 'Signset' },] 
+          { num: 5 , name: "活动管理", icon: 'el-icon-present' , evens: [ { name:'课程签到', path: '/sign_arrival' },] 
             },
-          { num: 6 , name: "系统设置", icon: 'el-icon-folder-checked' , evens: [ { name:'修改密码', path: 'ModificationPassword' } ] },
+          { num: 6 , name: "系统设置", icon: 'el-icon-folder-checked' , evens: [ { name:'修改密码', path: '/ModificationPassword' } ] },
            ],
         bread : [
           { name: '首页', path: '/' }
@@ -206,7 +188,7 @@
     },
     // 自动播放函数
     play () {
-      this.hide_expose=false;
+      //this.hide_expose=false;
       if (!this.maskBol) {
         if (this.timer ) {
           window.clearInterval(this.timer)
@@ -218,7 +200,7 @@
       }
     },
     stop () {
-      this.hide_expose=true;
+      //this.hide_expose=true;
       window.clearInterval(this.timer)
       this.timer = null
     },
@@ -267,55 +249,96 @@
 </script>
 
 <style scoped lang="scss">
-  .home {
-    height: 100%;
-  }
-  .tac {
-    height: 100%;
-  }
-  .left {
-    height:100%;
-    background: #ffffff;
-  }
-  .title {
-    height: 75px;
-    line-height: 75px;
-    padding-left: 10%;
-    background: #ffffff;
-    font-size:20px;
-    font-family:FZZYJW--GB1-0;
-    font-weight:400;
-    color:rgba(89,187,255,1);
-  }
-  .admin {
-    color:#7753D5;
-  }
-  .top {
-    height:57px;
-    line-height:57px;
-    background:#57faff;
-    padding-left: 1px;
-    text-align: right;
-  }
-  .content {
-    padding-top: 23px;
-    margin-top: 12px;
-    margin-left: 13px;
-    margin-right: 26px;
-    background: #ffffff;
-  }
-  .content1 {
-    padding-top: 23px;
-    margin-top: 24px;
-    margin-left: 13px;
-    margin-right: 26px;
-    background: #ffffff;
-  }
-  .body {
-    margin-top: 12px;
-    margin-left: 12px;
-    margin-right: 26px;
-  }
+nav ul li a {
+    display:block;
+    color:#000;
+    text-decoration:none;
+    font-family:"微软雅黑";
+}
+.header_left{
+    float: left;
+    line-height: 120px;
+
+}
+.header_left img{
+	margin-left:250px;
+    width: 300px;
+    height: 80px;
+}
+.header_right{
+    float: right;
+    height: 120px;
+    width:750px;
+    position: relative;
+}
+.header_right>div{
+    position: absolute;
+    top: 200px;
+    right: 0;
+
+}
+.header_right ul{
+    margin-top: 88px;
+
+}
+nav {
+    width:750px;
+    text-align:center;
+}
+nav ul {
+	width:750px;
+    border-radius:10px;
+    background:linear-gradient(to bottom,#efefef,#bbbbbb);
+    padding:0 30px;
+    display:inline-table;
+    position:relative;  
+    box-shadow:1px 1px 3px #666;
+}
+nav ul ul {
+    display:none;
+}
+nav ul li:last-child{
+border-right: 1px solid #666;
+}
+nav ul li {
+	width:112px;
+	border-left: 1px solid #666;
+    list-style-type:none;
+    float:left; 
+}
+nav ul::after {
+    content:"";
+    display:block;
+    clear:both;
+}
+nav ul li:hover > ul {
+    display:block;
+}
+nav ul li:hover {
+    background:linear-gradient(to bottom,#4f5964,#5f6975);
+}
+nav ul li:hover a {
+    color:#FFF;
+}
+nav ul ul {
+    background:#5f6975;
+    border-radius:0;
+    width:112px;
+    position:absolute;
+    padding:0;
+}
+nav ul ul li {
+	top:100%;
+	width:112px;
+    float:none;
+    border-bottom:1px solid #ffffff;
+}
+nav ul ul li a {
+    color:#FFF;
+}   
+nav ul ul li a:hover {
+    background:#4b545f;
+}
 
   .el-breadcrumb {
     height: 57px;
@@ -343,22 +366,23 @@
     text-align: center;
     .window{
       position:relative;
-      width:1253px;
+      width:750px;
       height:689px;
-      margin:0 auto;
+      margin-top:0;
       overflow:hidden;
       .container{
         display:flex;
         position:absolute;
+        
       }
       .left, .right{
         position:absolute;
         top:50%;
         transform:translateY(-50%);
-        width:50px;
-        height:50px;
+        width:80px;
+        height:80px;
         background-color:rgba(0,0,0,.3);
-        border-radius:50%;
+        border-radius:100%;
         cursor:pointer;
       }
       .left{
@@ -377,7 +401,7 @@
     }
     .dots{
         position:absolute;
-        bottom:10px;
+        bottom:120px;
         left:50%;
         transform:translateX(-50%);
       }
@@ -413,8 +437,8 @@
     color: #fff;
     background: #000;
     opacity: .5;
-    bottom: 30px;
-    height: 30px;
+    bottom: 140px;
+    height: 50px;
     text-align: left;
     padding-left: 15px;
   }

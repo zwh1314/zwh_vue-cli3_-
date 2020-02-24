@@ -48,7 +48,7 @@
 	</div>
 	</div>
 	<!--分页-->
-	<div class="page-bar">
+	<div class="page-bar" style="margin-left:25px">
 	<ul>
 	<li v-if="cur>1"><a v-on:click="cur--,pageClick()">上一页</a></li>
 	<li v-if="cur==1"><a class="banclick">上一页</a></li>
@@ -375,7 +375,6 @@ th
 	font-size: 18px;
 	height: 350px;
 }
-
 .modal-footer {
 	display: block;
 	line-height: 30px;
@@ -386,9 +385,8 @@ th
 
 #txtLy{
         width:100%; 
-        height:30px;
+        height:80px;
 	}
-
 a:link {color: black;  font-weight: bold;} /*平时链接的样式*/ 
 a:hover {color: blue;  font-weight: bold;} /*鼠标放置在链接上方的样式*/ 
 a:visited {color: black;  font-weight: bold;} /*访问过后的样式*/ 

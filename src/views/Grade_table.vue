@@ -37,7 +37,7 @@ export default {
   },
 }
 </script>
-<style>
+<style scoped lang="scss">
 a {
     font-weight: bold;
     color: white;

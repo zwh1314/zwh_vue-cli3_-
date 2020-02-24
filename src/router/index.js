@@ -11,8 +11,10 @@ const Select_point_table = () => import('../views/Select_point_table.vue')
 const Must_point_table = () => import('../views/Must_point_table.vue')
 const Lose_trust = () => import('../views/Lose_trust.vue')
 const Course_inf = () => import('../views/Course_inf.vue')
+const Sign_Arrival = () => import('../views/Sign_Arrival.vue')
 
 Vue.use(VueRouter)
+
 
 const routes = [
   {
@@ -70,9 +72,16 @@ const routes = [
 		name: 'course_inf',
 		component: Course_inf
   },
+  {
+		path: '/sign_arrival',
+		name: 'sign_arrival',
+		component: Sign_Arrival
+  },
 ]
 
 const router = new VueRouter({
+	mode:'history',
+	base:'/',
   routes
 })
 

@@ -1,7 +1,7 @@
 <template>
-  <div class="about">
+  <div class="about" style="text-align: center;">
     <h1>个人信息</h1>
-    <table border="1" align="center">
+    <table style="margin:auto;table-layout: fixed;" border="1 solid #F00" width="100%" cellspacing="0" cellpadding="2">
 		<tbody>
 			<tr>
 				<th colspan="4">个人信息</th>
@@ -9,7 +9,6 @@
 			<tr>
 				<td>姓名</td>
 				<td colspan="2">{{this.$store.state.user_name}}</td>
-				
 				<td rowspan="4">
 				<input type="file" >
 				</td>
@@ -76,3 +75,7 @@ export default {
   },
 }
 </script>
+
+<style>
+
+</style>

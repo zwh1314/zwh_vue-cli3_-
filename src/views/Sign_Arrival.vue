@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h1>待修读课程</h1>
+  <div class="about">
+    <h1>在修课程</h1>
     <p>欢迎您，{{this.$store.state.user_name}}</p>
     <br>
     <button @click="add_course()">添加课程</button>
@@ -10,22 +10,36 @@
     <th>课程名称</th>
     <th>授课教师</th>
     <th>学分</th>
-    <th>上课时间</th>
+    <th>签到与否</th>
     <th>
-	点击退课
+	点击进行签到
     </th>
     </tr>
     <tr v-for="(course_for,index) of course_list" :key="index">
-    <td><router-link to="/course_inf"  @click.native="check_course_inf(course_for)">{{course_for.course_name}}</router-link></td>
+    <td><router-link  @click.native="check_course_inf(course_for)" to="/course_inf">{{course_for.course_name}}</router-link></td>
     <td>{{course_for.course_teacher}}</td>
     <td>{{course_for.course_point}}</td>
-    <td>{{course_for.course_time}}</td>
+    <td>{{course_for.course_isarrive}}</td>
     <td>
-    <button @click="delete_course()">退课</button>
+    <button @click="sign_arrival_course(course_for,index)">签到</button>
     </td>
     </tr>
     </table>
-    <!--分页-->
+    
+    <!-- 弹出窗口 -->
+	<div id="myModal" class="modal">
+	<!-- 弹窗内容 -->
+		<div class="modal-content">
+			<div class="modal-header">
+			<span class="close">&times;</span>
+			<h2>课程评教</h2>
+			</div>
+			<div class="modal-body">
+				<img src="../assets/logo.png"> <!--签到二维码,通过相应课程对象获得-->
+			</div>
+		</div>
+	</div>
+	<!--分页-->
 	<div class="page-bar" style="margin-left:25px">
 	<ul>
 	<li v-if="cur>1"><a v-on:click="cur--,pageClick()">上一页</a></li>
@@ -40,11 +54,28 @@
 	</div>
   </div>
 </template>
-<script>
+<script type="text/javascript">
 import {mapMutations} from 'vuex' //获取./store中state中的变量和mutations中的函数
 
+// 弹窗js
+function open_window(){
+		//获取弹窗所在div
+		var modal = document.getElementById('myModal');
+		//获取x按钮
+		var span = document.getElementsByClassName("close")[0];
+		modal.style.display = "block";
+		span.onclick = function() {
+			//关闭弹窗
+			modal.style.display = "none";
+		}
+		window.onclick = function(event) {
+			//关闭弹窗
+			if (event.target == modal) modal.style.display = "none";
+		}
+}
+
 export default {
-  name: 'my_classtable_ready',
+  name: 'sign_arrival',
   data () 
   {	
   return{
@@ -54,12 +85,13 @@ export default {
   total_course:50,//总的课程数
   start:0,//起始记录
   end:-1,//结束记录
+  course_index: -1,
   course_data:
   {
   course_name: "语文",
   course_teacher: "缪老师",
   course_point: 3,
-  course_time: "1-18 星期二1，2节",
+  course_isarrive: "未签到",
   },
   course_list:
   [
@@ -67,19 +99,19 @@ export default {
   course_name: "数学",
   course_teacher: "孔老师",
   course_point: 2,
-  course_time: "1-18 星期三1，2节",
+  course_isarrive: "未签到",
   },
   {
   course_name: "英语",
   course_teacher: "程老师",
   course_point: 2,
-  course_time: "1-18 星期四1，2节",
+  course_isarrive: "未签到",
   },
   {
   course_name: "物理",
   course_teacher: "李老师",
   course_point: 2,
-  course_time: "1-18 星期五1，2节",
+  course_isarrive: "未签到",
   }
   ]
   }
@@ -99,9 +131,13 @@ export default {
 		}
 	})
 	.then((res) => {
-		//获取返回的课程链表List<Lesson>信息
+		//获取返回的课程信息
 		if(res.data.message == "success")
-		this.course_list=res.data;
+		{
+		this.course_list=[];
+		for(let i=0;i<res.data.data.length;i++)
+		this.course_list.push(res.data.data[i])
+		}
 	});
 	},
 //分页
@@ -132,11 +168,39 @@ export default {
   this.course_list.unshift(this.course_data);
   },
   
-  delete_course(index)
+  sign_arrival_course(course_for,index)
   {
-  if(window.confirm("您确定退掉该门课程吗？"))
-  this.course_list.splice(index,1);
+  if(course_for.course_isarrive === true){
+  alert("您以对该课程进行签到，请完成其他剩余课程的签到！");
+  return;
   }
+  else{
+  open_window();
+  this.course_index=index;
+  this.course_data={...course_for,course_isarrive: "已签到",};
+  }
+  },
+  
+  submit(){
+  if(this.comment_text1 === ""||this.comment_text2 === ""||this.comment_text3 === ""){
+  alert("请重新进行该课程签到！");
+  return;
+  }
+  //上传评教内容到后台数据库
+  alert("签到成功");
+  this.course_list.splice(this.course_index,1,this.course_data);
+  this.cancel();
+  },
+  
+  cancel(){
+  this.course_data={};
+  this.course_index=-1;
+  },
+  
+  course_inf(index)
+  {
+  console.log(this.course_list.slice(index,index+1));
+  },
   
   },
   
@@ -194,13 +258,10 @@ export default {
 		}
 	});
   },
-}
-</script>
-<style>
-a:link {color: black;  font-weight: bold;} /*平时链接的样式*/ 
-a:hover {color: blue;  font-weight: bold;} /*鼠标放置在链接上方的样式*/ 
-a:visited {color: black;  font-weight: bold;} /*访问过后的样式*/ 
+};
 
+</script>
+<style type="text/css">
 .div_back
 {
 background:url(../assets/course_table_background.jpg) no-repeat 150px
@@ -221,6 +282,89 @@ th
   color:white;
   }
   
+/* 弹窗 (background) */
+.modal {
+    display: none; /* 是否弹出 */
+    position: fixed; 
+    z-index: 1; 
+    left: 0;
+    top: 0;
+    padding-top: 200px;
+    padding-bottom: 300px;
+    width: 100%; 
+    height:  100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4);
+    text-align: center;
+}
+
+.modal-content {
+    /*position: relative;*/
+    background-color: #fefefe;
+    margin: auto;
+    padding: 200px auto;
+    width: 400px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s
+}
+
+@-webkit-keyframes animatetop {
+    from {top:-200px; opacity:0} 
+    to {top:0; opacity:1}
+}
+
+@keyframes animatetop {
+    from {top:-200px; opacity:0}
+    to {top:0; opacity:1}
+}
+
+.close {
+    color: white;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover, .close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal-header {
+	display: block;
+	line-height: 30px;
+    padding: 2px 10px;
+    background-color: blue;
+    color: white;
+    text-align: left;
+}
+
+.modal-body {
+	padding: 2px 16px;
+	font-size: 18px;
+	height: 350px;
+}
+.modal-footer {
+	display: block;
+	line-height: 30px;
+    padding: 2px 10px;
+    background-color: blue;
+    color: white;
+}
+
+#txtLy{
+        width:100%; 
+        height:80px;
+	}
+a:link {color: black;  font-weight: bold;} /*平时链接的样式*/ 
+a:hover {color: blue;  font-weight: bold;} /*鼠标放置在链接上方的样式*/ 
+a:visited {color: black;  font-weight: bold;} /*访问过后的样式*/ 
+
 /*分页*/
 .page-bar{
 margin-left: 500px;
@@ -265,13 +409,5 @@ font-style:normal;
 color: #d44950;
 margin: 0px 4px;
 font-size: 12px;
-}
-.back1{
-margin-top: 0px;
-postition:absolute;
-      background: url('../assets/background_pic1.jpg') center center no-repeat;
-      height: 100%;
-      position: fixed;
-      width: 100%
 }
 </style>
